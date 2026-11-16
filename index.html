@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ScribeChain – Video Transcription, $1 per 5 minutes</title>
+<style>
+:root{--bg:#f7f8fb;--card:#fff;--text:#14182b;--muted:#5b6280;--accent:#4f46e5;--accent-t:#fff;--line:#e3e6f0;--ok:#0f8a5f;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1220;--card:#181c30;--text:#eef0fa;--muted:#a3a9c6;--accent:#8b85ff;--accent-t:#0f1220;--line:#2a2f4a;--ok:#4cd6a0;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1220;--card:#181c30;--text:#eef0fa;--muted:#a3a9c6;--accent:#8b85ff;--accent-t:#0f1220;--line:#2a2f4a;--ok:#4cd6a0;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.55}
+.wrap{max-width:760px;margin:0 auto;padding:24px 18px 60px}
+header{text-align:center;padding:36px 0 18px}
+h1{font-size:clamp(1.9rem,5vw,2.6rem);margin:0 0 8px}
+.sub{color:var(--muted);font-size:1.05rem;margin:0}
+.price{display:inline-block;margin-top:16px;background:var(--accent);color:var(--accent-t);padding:8px 18px;border-radius:999px;font-weight:700}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:18px}
+h2{font-size:1.15rem;margin:0 0 12px}
+label{display:block;font-size:.9rem;color:var(--muted);margin:12px 0 4px}
+input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--text);font-size:1rem}
+button{cursor:pointer;border:0;border-radius:9px;padding:11px 16px;font-size:1rem;font-weight:600;background:var(--accent);color:var(--accent-t)}
+button.alt{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.total{font-size:1.6rem;font-weight:800;margin:14px 0 4px}
+.muted{color:var(--muted);font-size:.9rem}
+.addr{display:flex;gap:8px;align-items:stretch;margin-top:8px}
+.addr code{flex:1;overflow-x:auto;white-space:nowrap;padding:11px 12px;background:var(--bg);border:1px solid var(--line);border-radius:9px;font-size:.85rem}
+ol{padding-left:20px;margin:0}
+.steps li{margin:6px 0}
+.warn{background:var(--bg);border-left:4px solid var(--accent);padding:10px 12px;border-radius:6px;margin-top:12px;font-size:.92rem}
+.ok{color:var(--ok);font-weight:600}
+textarea{width:100%;min-height:120px;padding:11px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--text);font-family:ui-monospace,monospace;font-size:.85rem}
+footer{text-align:center;color:var(--muted);font-size:.85rem;margin-top:30px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>ScribeChain</h1>
+  <p class="sub">Accurate video transcripts, delivered fast.</p>
+  <span class="price">$1.00 per 5 minutes</span>
+</header>
+
+<div class="card">
+  <h2>1. Get your quote</h2>
+  <label for="url">Video link (YouTube or other, you must own it or have permission)</label>
+  <input id="url" type="url" placeholder="https://www.youtube.com/watch?v=...">
+  <label for="mins">Video length (minutes)</label>
+  <input id="mins" type="number" min="1" step="1" value="10">
+  <label for="email">Your email (for delivery)</label>
+  <input id="email" type="email" placeholder="you@example.com">
+  <div class="total" id="total">$2.00</div>
+  <div class="muted" id="blocks">2 blocks × 5 min × $1.00 (rounded up per 5 minutes)</div>
+  <p><button id="go">Continue to payment</button></p>
+</div>
+
+<div class="card hidden" id="pay">
+  <h2>2. Pay</h2>
+  <p>Amount due: <strong id="due">$2.00</strong></p>
+
+  <h2 style="margin-top:18px">Option A – Crypto (USDT / USDC on Ethereum)</h2>
+  <div class="muted">Send exactly the amount due to this Ethereum (ERC-20) address:</div>
+  <div class="addr">
+    <code id="addr">0x209e10de5740261f2ad87b2c3b433caef375e591</code>
+    <button class="alt" id="copy">Copy</button>
+  </div>
+  <div class="warn">Ethereum network only. Do <strong>not</strong> send Bitcoin (BTC) to this address – it will be lost. Network gas fees are paid by the sender.</div>
+
+  <h2 style="margin-top:18px">Option B – Debit / credit card</h2>
+  <p class="muted">Card payments are processed by a payment partner, which converts them and settles to the address above.</p>
+  <p><a id="cardlink" href="#" target="_blank" rel="noopener"><button class="alt" type="button">Pay by card</button></a></p>
+
+  <h2 style="margin-top:18px">3. Confirm your order</h2>
+  <label for="tx">Transaction hash or card receipt number</label>
+  <input id="tx" placeholder="0x...">
+  <p><button id="confirm">Generate order summary</button></p>
+  <div id="summary" class="hidden">
+    <p class="ok">Order summary ready. Copy it and send it to the transcription desk to start your job.</p>
+    <textarea id="sumtxt" readonly></textarea>
+    <p><button class="alt" id="copysum">Copy summary</button></p>
+  </div>
+</div>
+
+<div class="card">
+  <h2>How it works</h2>
+  <ol class="steps">
+    <li>Paste your video link and length to see the price.</li>
+    <li>Pay by crypto or card.</li>
+    <li>Confirm your order with the payment reference.</li>
+    <li>Receive your transcript (TXT/SRT) by email.</li>
+  </ol>
+</div>
+
+<footer>© ScribeChain. Only submit videos you own or have permission to transcribe.</footer>
+</div>
+
+<script>
+// ---- Owner settings (edit these) ----
+var CARD_PAYMENT_LINK = "#"; // paste your Stripe Payment Link or on-ramp URL here
+var PRICE_PER_BLOCK = 1.00;  // USD per 5 minutes
+// -------------------------------------
+var $ = function(id){return document.getElementById(id)};
+function quote(){
+  var m = Math.max(1, Math.floor(Number($("mins").value)||1));
+  var b = Math.ceil(m/5), t = b*PRICE_PER_BLOCK;
+  $("total").textContent = "$"+t.toFixed(2);
+  $("blocks").textContent = b+" block"+(b>1?"s":"")+" × 5 min × $"+PRICE_PER_BLOCK.toFixed(2)+" (rounded up per 5 minutes)";
+  return {m:m,b:b,t:t};
+}
+$("mins").addEventListener("input",quote);
+$("go").onclick=function(){
+  var q=quote();
+  if(!$("url").value.trim()||!$("email").value.trim()){alert("Please enter the video link and your email.");return;}
+  $("due").textContent="$"+q.t.toFixed(2);
+  $("cardlink").href=CARD_PAYMENT_LINK;
+  $("pay").classList.remove("hidden");
+  $("pay").scrollIntoView({behavior:"smooth"});
+};
+function copy(txt,btn){
+  var done=function(){var o=btn.textContent;btn.textContent="Copied";setTimeout(function(){btn.textContent=o},1500)};
+  try{navigator.clipboard.writeText(txt).then(done,done)}catch(e){done()}
+}
+$("copy").onclick=function(){copy($("addr").textContent,$("copy"))};
+$("confirm").onclick=function(){
+  var q=quote();
+  if(!$("tx").value.trim()){alert("Enter your payment reference.");return;}
+  $("sumtxt").value="ORDER – ScribeChain\nVideo: "+$("url").value.trim()+"\nLength: "+q.m+" min ("+q.b+" blocks)\nAmount: $"+q.t.toFixed(2)+"\nEmail: "+$("email").value.trim()+"\nPayment ref: "+$("tx").value.trim()+"\nPay-to: "+$("addr").textContent;
+  $("summary").classList.remove("hidden");
+};
+$("copysum").onclick=function(){copy($("sumtxt").value,$("copysum"))};
+quote();
+</script>
+</body>
+</html>
